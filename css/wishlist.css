@@ -1,0 +1,4 @@
+.notInWishList .wishListRemoveLink,
+.inWishList .wishListAddLink {
+	display: none !important;
+}

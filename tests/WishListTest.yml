@@ -1,0 +1,16 @@
+Member:
+  m1:
+    FirstName: Peter
+    Surname: Heck
+  m2:
+    FirstName: Jim
+    Surname: Beam
+
+Product:
+  p1:
+    Title: Bottle of Whiskey
+  p2:
+    Title: Box of Chocolates
+  p3:
+    Title: Grassfed Beef
+

@@ -1,6 +1,0 @@
----
-Name: wishlistroutes
----
-Director:
-  rules:
-    'wishlist//$Action/$ID/$OtherID': WishList_Controller

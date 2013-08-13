@@ -12,6 +12,8 @@ class WishListTest extends SapphireTest
 	static $fixture_file = 'WishListTest.yml';
 
 	function setUpOnce() {
+		ini_set('memory_limit', '256M');
+//		error_reporting(E_ALL);
 		$p = singleton('Product');
 		if (!$p->hasExtension('CanAddToWishList')) {
 			Product::add_extension('CanAddToWishList');
@@ -20,8 +22,8 @@ class WishListTest extends SapphireTest
 
 	function testLinks() {
 		$p = $this->objFromFixture('Product', 'p1');
-		$this->assertEquals('wishlist/add/' . $p->ID . '/Product', $p->WishListAddLink());
-		$this->assertEquals('wishlist/remove/' . $p->ID . '/Product', $p->WishListRemoveLink());
+		$this->assertEquals('/wish-list/add/' . $p->ID . '/Product', $p->WishListAddLink());
+		$this->assertEquals('/wish-list/remove/' . $p->ID . '/Product', $p->WishListRemoveLink());
 	}
 
 	function testAddRemove() {
@@ -35,7 +37,7 @@ class WishListTest extends SapphireTest
 		// should be able to get a default empty list
 		$list = WishList::current();
 		$this->assertNotNull($list);
-		$this->assertEquals(0, $list->getItemCount());
+		$this->assertEquals(0, $list->getBuyableCount());
 
 		// product should initially not be in a list
 		$this->assertFalse($p1->IsInWishList());
@@ -54,7 +56,7 @@ class WishListTest extends SapphireTest
 		$this->assertTrue($p2->IsInWishList());
 
 		// wishlist should now have 2 items
-		$this->assertEquals(2, $list->getItemCount());
+		$this->assertEquals(2, $list->getBuyableCount());
 
 		// after removing an item should register as not being in the list
 		$r = $list->removeBuyable($p1);
@@ -63,17 +65,17 @@ class WishListTest extends SapphireTest
 		$this->assertTrue($r);
 
 		// wishlist should now have 1 item
-		$this->assertEquals(1, $list->getItemCount());
+		$this->assertEquals(1, $list->getBuyableCount());
 
 		// removing an item that's not in the list should return false and not cause problems
 		$r = $list->removeBuyable($p3);
-		$this->assertEquals(1, $list->getItemCount());
+		$this->assertEquals(1, $list->getBuyableCount());
 		$this->assertFalse($r);
 
 		// after removing the second item the count should be 0
 		$list->removeBuyable($p2);
 		$this->assertFalse($p2->IsInWishList());
-		$this->assertEquals(0, $list->getItemCount());
+		$this->assertEquals(0, $list->getBuyableCount());
 	}
 
 	function testMultipleLists() {
@@ -99,7 +101,7 @@ class WishListTest extends SapphireTest
 		$l1 = WishList::current();
 		$l1->write();
 		$l1->addBuyable($p1);
-		Debug::dump(array($l1, WishList::get_for_user()->sql(), WishList::get_for_user()->count(), WishList::get_for_user()->getIDList()));
+		//Debug::dump(array($l1, WishList::get_for_user()->sql(), WishList::get_for_user()->count(), WishList::get_for_user()->getIDList()));
 		$this->assertEquals(1, WishList::get_for_user()->count());
 		$this->assertEquals(0, WishList::get_for_user($m2)->count());
 

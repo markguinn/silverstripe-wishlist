@@ -1,4 +1,68 @@
+/* Product page ******************************************************/
+
 .notInWishList .wishListRemoveLink,
 .inWishList .wishListAddLink {
 	display: none !important;
+}
+
+
+/* Wish list page ****************************************************/
+
+.wishListActions li {
+	list-style: none;
+	display: inline-block;
+}
+
+.wishListActions li.right {
+	float: right;
+}
+
+
+/* Edit/rename wish list form ****************************************/
+
+#EditWishList {
+	font-size: 33%;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#Form_WishListForm {
+	display: none;
+	margin-bottom: 25px;
+}
+
+#Form_WishListForm fieldset {
+	float: left;
+	margin-right: 20px;
+}
+
+#Form_WishListForm input[type=text] {
+	font-size: 2em;
+}
+
+#Form_WishListForm div.field {
+	margin: 0;
+}
+
+#Form_WishListForm div.Actions {
+	margin: 0;
+}
+
+body.editingWishList #WishListTitle {
+	display: none;
+}
+body.editingWishList #Form_WishListForm {
+	display: block;
+}
+
+
+/* Clearfix ************************************************/
+
+.wishListActions:before, #Form_WishListForm:before
+.wishListActions:after, #Form_WishListForm:after {
+	content: " ";
+	display: table;
+}
+.wishListActions:after, #Form_WishListForm:after {
+	clear: both;
 }

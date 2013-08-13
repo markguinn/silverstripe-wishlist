@@ -12,12 +12,9 @@ or the old-fashioned way.
 
 TODO:
 -----
-- View/edit wishlist
-- Rename/create/delete other lists
 - Add to alternate list from product page
 - Ajaxify product page
 - View in CMS
-- CSRF token to add/remove
 - "Save an idea" feature
 - public/private lists
 - share with link

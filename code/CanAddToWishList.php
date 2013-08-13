@@ -13,14 +13,14 @@ class CanAddToWishList extends DataExtension
 	 * @return string
 	 */
 	function WishListAddLink() {
-		return WishList_Controller::add_item_link($this->getOwner()->ID, $this->getOwner()->ClassName);
+		return WishListPage::add_item_link($this->getOwner()->ID, $this->getOwner()->ClassName);
 	}
 
 	/**
 	 * @return string
 	 */
 	function WishListRemoveLink() {
-		return WishList_Controller::remove_item_link($this->getOwner()->ID, $this->getOwner()->ClassName);
+		return WishListPage::remove_item_link($this->getOwner()->ID, $this->getOwner()->ClassName);
 	}
 
 	/**
@@ -42,6 +42,16 @@ class CanAddToWishList extends DataExtension
 	 * @return WishListItem
 	 */
 	function WishListItem() {
+		return $this->getOwner()->WishListItems()->first();
+	}
+
+	/**
+	 * IF this item is an any of the current member's wishlists,
+	 * returns the wishlist item records.
+	 *
+	 * @return DataList
+	 */
+	function WishListItems() {
 		$listWhere = sprintf(
 			'"WishList"."ID" = "WishListItem"."WishListID" AND "WishList"."OwnerID" = \'%d\'',
 			Member::currentUserID());
@@ -51,6 +61,6 @@ class CanAddToWishList extends DataExtension
 			->filter(array(
 				'BuyableID'         => $this->getOwner()->ID,
 				'BuyableClassName'  => $this->getOwner()->ClassName,
-			))->first();
+			));
 	}
 }

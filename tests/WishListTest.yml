@@ -14,3 +14,7 @@ Product:
   p3:
     Title: Grassfed Beef
 
+WishListPage:
+  wp1:
+    Title: Wish List
+    URLSegment: wish-list

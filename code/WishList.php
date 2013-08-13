@@ -52,8 +52,10 @@ class WishList extends DataObject
 	 * @param WishList $list
 	 */
 	public static function set_current($list) {
+		$list->write(false, false, true); // force LastEdited to change
 		self::$current = $list;
 	}
+
 
 	/**
 	 * @param Member $member [optional] - defaults to current user
@@ -67,9 +69,18 @@ class WishList extends DataObject
 
 
 	/**
+	 * Set the owner automatically if needed
+	 */
+	protected function onBeforeWrite() {
+		parent::onBeforeWrite();
+		if (!$this->OwnerID) $this->OwnerID = Member::currentUserID();
+	}
+
+
+	/**
 	 * @return int
 	 */
-	public function getItemCount() {
+	public function getBuyableCount() {
 		return $this->Items()->count();
 	}
 
@@ -115,74 +126,28 @@ class WishList extends DataObject
 		$item->WishListItem()->delete();
 		return true;
 	}
-}
-
-
-class WishList_Controller extends Controller
-{
-	private static $allowed_actions = array('add', 'remove');
-	private static $url_segment = 'wishlist';
 
 	/**
-	 * @param $id
-	 * @param $className
-	 * @return string
+	 * @return int - number of items removed
 	 */
-	static function add_item_link($id, $className) {
-		return sprintf('%s/add/%d/%s', Config::inst()->get('WishList_Controller', 'url_segment'), $id, $className);
-	}
+	public function removeAllBuyables() {
+		$items = $this->Items();
+		$count = 0;
 
-	/**
-	 * @param $id
-	 * @param $className
-	 * @return string
-	 */
-	static function remove_item_link($id, $className) {
-		return sprintf('%s/remove/%d/%s', Config::inst()->get('WishList_Controller', 'url_segment'), $id, $className);
+		foreach ($items as $item) {
+			$item->delete();
+			$count++;
+		}
+
+		return $count;
 	}
 
 
 	/**
-	 * @param SS_HTTPRequest $req
-	 * @return SS_HTTPResponse
+	 * @return String
 	 */
-	function add(SS_HTTPRequest $req) {
-		// check out the inputs
-		$buyables = EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables");
-		$id = (int)$req->param('ID');
-		$className = $req->param('OtherID');
-		if (!$id || !$className || !in_array($className, $buyables)) $this->httpError(403); // bad request
-
-		// look up the item
-		$item = DataObject::get($className)->byID($id);
-		if (!$item || !$item->exists()) $this->httpError(404);
-
-		// add it to the list
-		WishList::current()->addBuyable($item);
-
-		// return control
-		return $this->redirectBack();
-	}
-
-	/**
-	 * @param SS_HTTPRequest $req
-	 * @return SS_HTTPResponse
-	 */
-	function remove(SS_HTTPRequest $req) {
-		// check out the inputs
-		$buyables = EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables");
-		$id = (int)$req->param('ID');
-		$className = $req->param('OtherID');
-		if (!$id || !$className || !in_array($className, $buyables)) $this->httpError(403); // bad request
-
-		// look up the item
-		$item = DataObject::get($className)->byID($id);
-		if (!$item || !$item->exists()) $this->httpError(404);
-
-		// add it to the list
-		WishList::current()->removeBuyable($item);
-
-		// return control
-		return $this->redirectBack();
+	public function getSetCurrentLink() {
+		$url = WishListPage::inst()->Link('set-current-list/' . $this->ID);
+		return SecurityToken::inst()->addToUrl($url);
 	}
 }

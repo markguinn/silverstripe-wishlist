@@ -22,8 +22,10 @@ class WishListTest extends SapphireTest
 
 	function testLinks() {
 		$p = $this->objFromFixture('Product', 'p1');
-		$this->assertEquals('/wish-list/add/' . $p->ID . '/Product', $p->WishListAddLink());
-		$this->assertEquals('/wish-list/remove/' . $p->ID . '/Product', $p->WishListRemoveLink());
+		$this->assertStringStartsWith('/wish-list/add/' . $p->ID . '/Product', $p->WishListAddLink());
+		$this->assertStringStartsWith('/wish-list/remove/' . $p->ID . '/Product', $p->WishListRemoveLink());
+		$this->assertContains('?SecurityID=', $p->WishListAddLink());
+		$this->assertContains('?SecurityID=', $p->WishListRemoveLink());
 	}
 
 	function testAddRemove() {

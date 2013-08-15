@@ -12,7 +12,7 @@
 			<thead>
 				<tr>
 					<th scope="col" class="left"><% _t("Order.PRODUCT","Product") %></th>
-					<th scope="col" class="right"><% _t("Order.PRICE","Price") %></th>
+					<th scope="col" class="center"><% _t("Order.PRICE","Price") %></th>
 					<th scope="col" class="right"></th>
 				</tr>
 			</thead>
@@ -21,7 +21,23 @@
 					<tr id="$AJAXDefinitions.TableID" class="orderItemHolder">
 						<% with $Buyable %>
 							<td class="product title">
+<%--
+								<% if Image %>
+									<a href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$Title) %>">
+										<img src="$Image.Thumbnail.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
+									</a>
+								<% else %>
+									<a href="$Link" title="<% sprintf(_t("READMORE"),$Title) %>" class="noimage">no image</a>
+								<% end_if %>
 								<% include ProductGroupItemImageThumb %>
+--%>
+								<% if $Image %>
+									<div class="image">
+										<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">
+											<img src="<% with $Image.setWidth(45) %>$Me.AbsoluteURL<% end_with %>" alt="$Title"/>
+										</a>
+									</div>
+								<% end_if %>
 								<div class="itemTitleAndSubTitle">
 									<% if $Link %>
 										<a id="$AJAXDefinitions.TableTitleID" href="$Link" title="<%t Order.READMORE 'Click here to read more on {name}' name=$Title %>">$Title</a>
@@ -31,13 +47,19 @@
 								</div>
 							</td>
 						<% end_with %>
-						<td class="right unitprice">$UnitPriceAsMoney.NiceDefaultFormat</td>
+						<td class="center unitprice">$UnitPriceAsMoney.Nice</td>
 						<td class="right remove">
-							<strong>
-								<a class="ajaxQuantityLink ajaxRemoveFromCart" href="$Buyable.WishListRemoveLink" title="<% _t("WishList.REMOVELINK","Remove from Wish List") %>">
-									<img src="ecommerce/images/remove.gif" alt="x"/>
+							<% if $Top.IsShopModule %>
+								<a class="ajaxQuantityLink" href="$Buyable.WishListRemoveLink" title="<% _t("WishList.REMOVELINK","Remove from Wish List") %>">
+									<img src="shop/images/remove.gif" alt="x"/>
 								</a>
-							</strong>
+							<% else %>
+								<strong>
+									<a class="ajaxQuantityLink ajaxRemoveFromCart" href="$Buyable.WishListRemoveLink" title="<% _t("WishList.REMOVELINK","Remove from Wish List") %>">
+										<img src="ecommerce/images/remove.gif" alt="x"/>
+									</a>
+								</strong>
+							<% end_if %>
 						</td>
 					</tr>
 				<% end_loop %>

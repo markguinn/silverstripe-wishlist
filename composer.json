@@ -1,8 +1,8 @@
 {
-	"name": "markguinn/silverstripe-ecommerce_wishlist",
-	"description": "Submodule for Silverstripe Ecommerce which creation of multiple wishlists.",
+	"name": "markguinn/silverstripe-wishlist",
+	"description": "Submodule for Silverstripe Shop/Ecommerce which creation of multiple wishlists.",
 	"type": "silverstripe-module",
-	"keywords": ["silverstripe", "ecommerce", "wishlist", "wish list"],
+	"keywords": ["silverstripe", "ecommerce", "shop", "wishlist", "wish list"],
 	"license": "MIT",
 	"authors": [{
 		"name": "Mark Guinn",
@@ -10,10 +10,13 @@
 		"homepage": "http://github.com/markguinn"
 	}],
 	"extra": {
-		"installer-name": "ecommerce_wishlist"
+		"installer-name": "wishlist"
 	},
 	"require": {
-		"silverstripe/framework": ">=3.0",
-		"sunnysideup/ecommerce": ">=3.0"
+		"silverstripe/framework": "~3.1"
+	},
+	"suggest": {
+		"sunnysideup/ecommerce": "~3.0",
+		"burnbright/silverstripe-shop": "*"
 	}
 }

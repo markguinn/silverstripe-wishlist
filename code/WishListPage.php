@@ -90,7 +90,18 @@ class WishListPage_Controller extends Page_Controller
 	function init(){
 		parent::init();
 		$this->wishList = WishList::current();
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript(ECOMMERCE_WISHLIST_FOLDER . '/javascript/WishListPage.js');
+	}
+
+
+	/**
+	 * @return array
+	 */
+	private function lookupBuyables() {
+		return class_exists('EcommerceConfig')
+			? EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables")
+			: SS_ClassLoader::instance()->getManifest()->getImplementorsOf('Buyable');
 	}
 
 
@@ -100,7 +111,7 @@ class WishListPage_Controller extends Page_Controller
 	 */
 	function add(SS_HTTPRequest $req) {
 		// check out the inputs
-		$buyables = EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables");
+		$buyables = $this->lookupBuyables();
 		$id = (int)$req->param('ID');
 		$className = $req->param('OtherID');
 		if (!$id || !$className || !in_array($className, $buyables)) $this->httpError(400); // bad request
@@ -124,7 +135,7 @@ class WishListPage_Controller extends Page_Controller
 	 */
 	function remove(SS_HTTPRequest $req) {
 		// check out the inputs
-		$buyables = EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables");
+		$buyables = $this->lookupBuyables();
 		$id = (int)$req->param('ID');
 		$className = $req->param('OtherID');
 		if (!$id || !$className || !in_array($className, $buyables)) $this->httpError(400); // bad request
@@ -281,5 +292,11 @@ class WishListPage_Controller extends Page_Controller
 		return SecurityToken::inst()->addToUrl($this->Link('create-list'));
 	}
 
+	/**
+	 * @return bool
+	 */
+	function IsShopModule() {
+		return defined('SHOP_PATH');
+	}
 }
 

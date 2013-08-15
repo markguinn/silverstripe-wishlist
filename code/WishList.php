@@ -52,7 +52,7 @@ class WishList extends DataObject
 	 * @param WishList $list
 	 */
 	public static function set_current($list) {
-		$list->write(false, false, true); // force LastEdited to change
+		if ($list) $list->write(false, false, true); // force LastEdited to change
 		self::$current = $list;
 	}
 
@@ -88,7 +88,7 @@ class WishList extends DataObject
 	 * @param BuyableModel $item
 	 * @return bool
 	 */
-	public function hasBuyable(BuyableModel $item) {
+	public function hasBuyable($item) {
 		if (!$this->ID) return false;
 
 		$existing = WishListItem::get()->filter(array(
@@ -101,10 +101,10 @@ class WishList extends DataObject
 	}
 
 	/**
-	 * @param BuyableModel $item
+	 * @param Buyable|BuyableModel $item
 	 * @return bool
 	 */
-	public function addBuyable(BuyableModel $item) {
+	public function addBuyable($item) {
 		if (!$this->ID) $this->write();
 		if ($this->hasBuyable($item)) return false;
 
@@ -117,10 +117,10 @@ class WishList extends DataObject
 	}
 
 	/**
-	 * @param BuyableModel $item
+	 * @param Buyable|BuyableModel $item
 	 * @return bool
 	 */
-	public function removeBuyable(BuyableModel $item) {
+	public function removeBuyable($item) {
 		if (!$this->ID) return false;
 		if (!$this->hasBuyable($item)) return false;
 		$item->WishListItem()->delete();

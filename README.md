@@ -1,14 +1,28 @@
-Wishlist Submodule for Silverstripe Ecommerce
+Wishlist Submodule for Silverstripe Shop/Ecommerce
 =====================================================
 
 Allows customer to maintain multiple wishlists. Can be maintained
-from the AccountPage or the CMS.
+from the WishListPage on the frontend. *Supports both Shop and
+Ecommerce modules.*
 
 USAGE:
 ------
-Install module via composer (markguinn/silverstripe-ecommerce_wishlist)
-or the old-fashioned way.
+Install module via composer (markguinn/silverstripe-wishlist)
+or the old-fashioned way. Add the following to mysite/_config/config.yml:
 
+```
+Product:
+  extensions:
+    - CanAddToWishList
+```
+
+Make sure to dev/build?flush=1. You can add this extension to
+any Buyable model. It should work with non-sitetree models
+but that has not been tested.
+
+Depending on which module you're using you may need to include
+the WishListButtons.ss template (shop) or update the ProductActionsInner.ss
+template (ecommerce) in the spirit of the one included with this module.
 
 TODO:
 -----

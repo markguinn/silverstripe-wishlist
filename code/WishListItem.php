@@ -25,10 +25,10 @@ class WishListItem extends DataObject
 	protected static $calculated_buyable_price = array();
 
 	/**
-	 * @param BuyableModel $item
+	 * @param Buyable|BuyableModel $item
 	 * @return $this
 	 */
-	function setBuyable(BuyableModel $item) {
+	function setBuyable($item) {
 		$this->BuyableID = $item->ID;
 		$this->BuyableClassName = $item->ClassName;
 		return $this;
@@ -52,7 +52,11 @@ class WishListItem extends DataObject
 		$product = $this->getBuyable();
 		if ($product) {
 			if(!isset(self::$calculated_buyable_price[$this->ID]) || $recalculate) {
-				self::$calculated_buyable_price[$this->ID] = $product->getCalculatedPrice();
+				$unitprice = $product->hasMethod('sellingPrice')
+					? $product->sellingPrice()          // shop
+					: $product->getCalculatedPrice();   // ecommerce
+				$this->extend('updateUnitPrice',$unitprice);
+				self::$calculated_buyable_price[$this->ID] = $unitprice;
 			}
 
 			return self::$calculated_buyable_price[$this->ID];
@@ -65,6 +69,8 @@ class WishListItem extends DataObject
 	 */
 	public function UnitPriceAsMoney($recalculate = false) {return $this->getUnitPriceAsMoney($recalculate);}
 	public function getUnitPriceAsMoney($recalculate = false) {
-		return EcommerceCurrency::get_money_object_from_order_currency($this->getUnitPrice($recalculate));
+		return class_exists('ShopCurrency')
+			? new ShopCurrency($this->getUnitPrice($recalculate)) // shop
+			: EcommerceCurrency::get_money_object_from_order_currency($this->getUnitPrice($recalculate)); // ecommerce
 	}
 }

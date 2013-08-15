@@ -10,13 +10,10 @@
 		"homepage": "http://github.com/markguinn"
 	}],
 	"extra": {
-		"installer-name": "wishlist"
+		"installer-name": "shop_wishlist"
 	},
 	"require": {
-		"silverstripe/framework": "~3.1"
-	},
-	"suggest": {
-		"sunnysideup/ecommerce": "~3.0",
+		"silverstripe/framework": "~3.1",
 		"burnbright/silverstripe-shop": "*"
 	}
 }

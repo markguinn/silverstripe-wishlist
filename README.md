@@ -24,6 +24,12 @@ Depending on which module you're using you may need to include
 the WishListButtons.ss template (shop) or update the ProductActionsInner.ss
 template (ecommerce) in the spirit of the one included with this module.
 
+*NOTE:* If you prefer the module to be installed explicitly as a
+submodule for either ecommerce or shop, you can use dev-shop or
+dev-ecommerce instead of dev-master. The only difference at this
+time is the install folder being ecommerce_wishlist or shop_wishlist
+instead of just wishlist.
+
 TODO:
 -----
 - Add to alternate list from product page

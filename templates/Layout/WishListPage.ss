@@ -46,8 +46,8 @@
 									<% end_if %>
 								</div>
 							</td>
-						<% end_with %>
 						<td class="center unitprice">$UnitPriceAsMoney.Nice</td>
+						<% end_with %>
 						<td class="right remove">
 							<% if $Top.IsShopModule %>
 								<a class="ajaxQuantityLink" href="$Buyable.WishListRemoveLink" title="<% _t("WishList.REMOVELINK","Remove from Wish List") %>">

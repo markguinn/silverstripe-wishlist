@@ -1,6 +1,6 @@
 {
 	"name": "markguinn/silverstripe-wishlist",
-	"description": "Submodule for Silverstripe Shop/Ecommerce which creation of multiple wishlists.",
+	"description": "Wishlist submodule for Silverstripe Shop.",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "ecommerce", "shop", "wishlist", "wish list"],
 	"license": "MIT",
@@ -10,7 +10,10 @@
 		"homepage": "http://github.com/markguinn"
 	}],
 	"extra": {
-		"installer-name": "shop_wishlist"
+		"installer-name": "shop_wishlist",
+		"branch-alias": {
+			"dev-master": "1.0.x-dev"
+		}
 	},
 	"require": {
 		"silverstripe/framework": "~3.1",

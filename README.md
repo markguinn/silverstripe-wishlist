@@ -1,9 +1,11 @@
-Wishlist Submodule for Silverstripe Shop/Ecommerce
-=====================================================
+Wishlist Submodule for Silverstripe Shop
+========================================
 
 Allows customer to maintain multiple wishlists. Can be maintained
-from the WishListPage on the frontend. *Supports both Shop and
-Ecommerce modules.*
+from the WishListPage on the frontend. Originally supported both
+ss-shop and ecommerce modules, but ecommerce support is now only
+in the "agnostic" and "ecommerce" branches. For ongoing features I've
+chosen to specialize on ss-shop.
 
 USAGE:
 ------
@@ -20,15 +22,9 @@ Make sure to dev/build?flush=1. You can add this extension to
 any Buyable model. It should work with non-sitetree models
 but that has not been tested.
 
-Depending on which module you're using you may need to include
-the WishListButtons.ss template (shop) or update the ProductActionsInner.ss
-template (ecommerce) in the spirit of the one included with this module.
+You may need to include the WishListButtons.ss template or update your
+existing one in the spirit of the one included with this module.
 
-*NOTE:* If you prefer the module to be installed explicitly as a
-submodule for either ecommerce or shop, you can use dev-shop or
-dev-ecommerce instead of dev-master. The only difference at this
-time is the install folder being ecommerce_wishlist or shop_wishlist
-instead of just wishlist.
 
 TODO:
 -----
@@ -39,6 +35,7 @@ TODO:
 - public/private lists
 - share with link
 - Apply to ProductVariations and test
+
 
 DEVELOPERS:
 -----------

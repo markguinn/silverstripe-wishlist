@@ -13,10 +13,26 @@
 	display: inline-block;
 }
 
+.wishListActions li.left {
+	float: left;
+}
 .wishListActions li.right {
 	float: right;
 }
 
+h3.otherLists {
+	margin-top: 1em;
+	clear: both;
+}
+
+table.wishListTable {
+	width: 100%;
+	margin: 0 0 1em;
+}
+table.wishListTable .image {
+	padding-bottom: 10px;
+	width: 150px;
+}
 
 /* Edit/rename wish list form ****************************************/
 
@@ -33,7 +49,7 @@
 
 #Form_WishListForm fieldset {
 	float: left;
-	margin-right: 20px;
+	margin-right: 5px;
 }
 
 #Form_WishListForm input[type=text] {
@@ -55,6 +71,14 @@ body.editingWishList #Form_WishListForm {
 	display: block;
 }
 
+/* this just makes it compatible with bootstrap */
+#Form_WishListForm .form-group {
+	margin: 0;
+	display: inline-block;
+}
+#Form_WishListForm input[type=text].form-control {
+	font-size: 20px;
+}
 
 /* Clearfix ************************************************/
 

@@ -4,7 +4,7 @@
  *
  * @author Mark Guinn <mark@adaircreative.com>
  * @date 08.07.2013
- * @package ecommerce_wishlist
+ * @package shop_wishlist
  */
 class WishListItem extends DataObject
 {
@@ -22,55 +22,74 @@ class WishListItem extends DataObject
 		'WishList'          => 'WishList',
 	);
 
-	protected static $calculated_buyable_price = array();
+	private static $casting = array(
+		'UnitPrice'         => 'Currency',
+	);
+
 
 	/**
 	 * @param Buyable|BuyableModel $item
 	 * @return $this
 	 */
-	function setBuyable($item) {
+	public function setBuyable($item) {
 		$this->BuyableID = $item->ID;
 		$this->BuyableClassName = $item->ClassName;
 		return $this;
 	}
 
+
 	/**
 	 * @return DataObject|null
 	 */
-	function Buyable(){ return $this->getBuyable(); }
-	function getBuyable() {
+	public function getBuyable() {
 		if (!$this->BuyableClassName || !$this->BuyableID) return null;
 		return DataObject::get($this->BuyableClassName)->byID($this->BuyableID);
 	}
 
+	public function Buyable(){ return $this->getBuyable(); }
+
+
 	/**
-	 * @param bool $recalculate [optional]
 	 * @return Float
 	 */
-	function UnitPrice($recalculate=false){ return $this->getUnitPrice($recalculate); }
-	function getUnitPrice($recalculate=false) {
+	public function getUnitPrice() {
 		$product = $this->getBuyable();
-		if ($product) {
-			if(!isset(self::$calculated_buyable_price[$this->ID]) || $recalculate) {
-				$unitprice = $product->hasMethod('sellingPrice')
-					? $product->sellingPrice()          // shop
-					: $product->getCalculatedPrice();   // ecommerce
-				$this->extend('updateUnitPrice',$unitprice);
-				self::$calculated_buyable_price[$this->ID] = $unitprice;
-			}
-
-			return self::$calculated_buyable_price[$this->ID];
+		if ($product && $product->exists()) {
+			return $product->sellingPrice();
 		}
 	}
 
+	public function UnitPrice(){ return $this->getUnitPrice(); }
+
+
 	/**
-	 * @param bool $recalculate
-	 * @return Money
+	 * @return Currency
 	 */
-	public function UnitPriceAsMoney($recalculate = false) {return $this->getUnitPriceAsMoney($recalculate);}
-	public function getUnitPriceAsMoney($recalculate = false) {
-		return class_exists('ShopCurrency')
-			? new ShopCurrency($this->getUnitPrice($recalculate)) // shop
-			: EcommerceCurrency::get_money_object_from_order_currency($this->getUnitPrice($recalculate)); // ecommerce
+	public function getUnitPriceAsMoney() {
+		$out = new Currency('UnitPrice');
+		$out->setValue($this->getUnitPrice());
+		return $out;
 	}
+
+	public function UnitPriceAsMoney() {return $this->getUnitPriceAsMoney();}
+
+
+	/**
+	 * @return string
+	 */
+	public function TableTitle() {
+		$buyable = $this->getBuyable();
+		$item = $buyable->hasMethod('Item') ? $buyable->Item() : null;
+		return $item ? $item->TableTitle() : $buyable->Title;
+	}
+
+
+	/**
+	 * @return String
+	 */
+	public function SubTitle() {
+		$buyable = $this->getBuyable();
+		return $buyable->hasMethod('Item') ? $buyable->Item()->SubTitle() : '';
+	}
+
 }

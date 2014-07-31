@@ -96,25 +96,14 @@ class WishListPage_Controller extends Page_Controller
 
 
 	/**
-	 * @return array
-	 */
-	private function lookupBuyables() {
-		return class_exists('EcommerceConfig')
-			? EcommerceConfig::get("EcommerceDBConfig", "array_of_buyables")
-			: SS_ClassLoader::instance()->getManifest()->getImplementorsOf('Buyable');
-	}
-
-
-	/**
 	 * @param SS_HTTPRequest $req
 	 * @return SS_HTTPResponse
 	 */
 	function add(SS_HTTPRequest $req) {
 		// check out the inputs
-		$buyables = $this->lookupBuyables();
 		$id = (int)$req->param('ID');
 		$className = $req->param('OtherID');
-		if (!$id || !$className || !in_array($className, $buyables)) $this->httpError(400); // bad request
+		if (!$id || !$className) $this->httpError(400); // bad request
 		if (!SecurityToken::inst()->checkRequest($req)) $this->httpError(403);
 
 		// look up the item
@@ -122,10 +111,12 @@ class WishListPage_Controller extends Page_Controller
 		if (!$item || !$item->exists()) $this->httpError(404);
 
 		// add it to the list
-		WishList::current()->addBuyable($item);
+		$list = WishList::current();
+		$list->addBuyable($item);
 
 		// return control
-		return $this->redirectBack();
+		$this->extend('updateAddResponse', $req, $response, $list, $item);
+		return $response ? $response : $this->redirectBack();
 	}
 
 
@@ -135,21 +126,22 @@ class WishListPage_Controller extends Page_Controller
 	 */
 	function remove(SS_HTTPRequest $req) {
 		// check out the inputs
-		$buyables = $this->lookupBuyables();
 		$id = (int)$req->param('ID');
 		$className = $req->param('OtherID');
-		if (!$id || !$className || !in_array($className, $buyables)) $this->httpError(400); // bad request
+		if (!$id || !$className) $this->httpError(400); // bad request
 		if (!SecurityToken::inst()->checkRequest($req)) $this->httpError(403);
 
 		// look up the item
 		$item = DataObject::get($className)->byID($id);
 		if (!$item || !$item->exists()) $this->httpError(404);
 
-		// add it to the list
-		WishList::current()->removeBuyable($item);
+		// remove it from the list
+		$list = WishList::current();
+		$list->removeBuyable($item);
 
 		// return control
-		return $this->redirectBack();
+		$this->extend('updateRemoveResponse', $req, $response, $list, $item);
+		return $response ? $response : $this->redirectBack();
 	}
 
 
@@ -160,7 +152,8 @@ class WishListPage_Controller extends Page_Controller
 	function remove_all(SS_HTTPRequest $req) {
 		if (!SecurityToken::inst()->checkRequest($req)) $this->httpError(403);
 		$this->wishList->removeAllBuyables();
-		return $this->redirectBack();
+		$this->extend('updateRemoveAllResponse', $req, $response, $this->wishList);
+		return $response ? $response : $this->redirectBack();
 	}
 
 
@@ -172,7 +165,12 @@ class WishListPage_Controller extends Page_Controller
 		if (!SecurityToken::inst()->checkRequest($req)) $this->httpError(403);
 		$this->wishList->removeAllBuyables();
 		$this->wishList->delete();
-		return $this->redirectBack();
+
+		WishList::set_current(null);
+		$this->wishList = WishList::current();
+
+		$this->extend('updateDeleteListResponse', $req, $response);
+		return $response ? $response : $this->redirectBack();
 	}
 
 
@@ -183,16 +181,16 @@ class WishListPage_Controller extends Page_Controller
 	function create_list(SS_HTTPRequest $req) {
 		if (!SecurityToken::inst()->checkRequest($req)) $this->httpError(403);
 
-		$list = new WishList();
-		$list->Title = 'New Wish List';
-		$list->write();
+		$this->wishList = new WishList();
+		$this->wishList->Title = 'New Wish List';
+		$this->wishList->write();
 
 		// Will automatically be the 'current' list because it will have the most
-		// recent LastEdited. If the criteria for that ever changes this should
-		// be uncommented:
-		//WishList::set_current($list);
+		// recent LastEdited. This needs to be explicit for ajax responses though.
+		WishList::set_current($this->wishList);
 
-		return $this->redirectBack();
+		$this->extend('updateCreateListResponse', $req, $response, $this->wishList);
+		return $response ? $response : $this->redirectBack();
 	}
 
 
@@ -205,8 +203,11 @@ class WishListPage_Controller extends Page_Controller
 		if (!$list || !$list->exists()) $this->httpError(404);
 		if ($list->OwnerID != Member::currentUserID()) $this->httpError(403);
 
+		$this->wishList = $list;
 		WishList::set_current($list);
-		return $this->redirectBack();
+
+		$this->extend('updateSetCurrentListResponse', $req, $response, $list);
+		return $response ? $response : $this->redirectBack();
 	}
 
 
@@ -214,7 +215,7 @@ class WishListPage_Controller extends Page_Controller
 	 * @return Form
 	 */
 	function WishListForm() {
-		return new Form($this, 'WishListForm',
+		$form = new Form($this, 'WishListForm',
 			new FieldList(array(
 				TextField::create('Title', '', $this->wishList->Title)
 					->setAttribute('placeholder', 'Name for List')
@@ -225,6 +226,9 @@ class WishListPage_Controller extends Page_Controller
 			)),
 			new RequiredFields('Title')
 		);
+
+		$this->extend('updateWishListForm', $form);
+		return $form;
 	}
 
 
@@ -242,7 +246,9 @@ class WishListPage_Controller extends Page_Controller
 
 		$this->wishList->write();
 
-		return $this->redirectBack();
+		$request = $this->getRequest();
+		$this->extend('updateSaveListResponse', $request, $response, $this->wishList, $data);
+		return $response ? $response : $this->redirectBack();
 	}
 
 

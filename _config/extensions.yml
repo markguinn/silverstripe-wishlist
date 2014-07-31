@@ -1,0 +1,6 @@
+---
+Name: wishlistextensions
+---
+WishListPage_Controller:
+  extensions:
+    - WishListAjax

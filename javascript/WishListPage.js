@@ -2,16 +2,23 @@
 	'use strict';
 
 	$(function(){
-		// Rename link displays the edit form
-		$('#EditWishList').click(function(){
-			$(document.body).toggleClass('editingWishList');
-			return false;
-		});
-
-		// Cancel button just hides the form
-		$('#Form_WishListForm_action_cancelEdit').click(function(){
-			$(document.body).removeClass('editingWishList');
-			return false;
-		});
+		$(document)
+			.on('click', '#EditWishList', function(){
+				// Rename link displays the edit form
+				$(document.body).toggleClass('editingWishList');
+				return false;
+			})
+			.on('click', '#Form_WishListForm_action_cancelEdit', function(e) {
+				// Cancel button hides the edit form
+				$(document.body).removeClass('editingWishList');
+				$(this).removeClass('ajax-loading');
+				e.preventDefault();
+				return false;
+			})
+			.on('wishlistchanged', function(){
+				// hide the edit form when the ajax is done
+				$(document.body).removeClass('editingWishList');
+			})
+		;
 	});
 }(jQuery, this, this.document));
